@@ -1,10 +1,19 @@
 const express = require('express');
+const cors = require('cors');
 const { errorMiddleware, notFoundMiddleware } = require('./middlewares/error.middleware');
-const router = require('./routes');
 const { currentUser } = require('./middlewares/currentUser.middleware');
+const router = require('./routes');
 
 const app = express();
 app.use(express.json());
+
+app.use(cors({
+  origin: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'X-User-Id'],
+  credentials: false,
+}));
+app.options('*', cors());
 
 app.use(currentUser);
 
