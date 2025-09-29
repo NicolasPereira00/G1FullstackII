@@ -1,29 +1,81 @@
 const { prisma } = require('../config/prisma');
 
-async function findAll() {
-  return prisma.usuario.findMany({ orderBy: { id: 'asc' } });
+async function findByEmail(email) {
+  return prisma.user.findUnique({ where: { email } });
 }
 
 async function findById(id) {
-  return prisma.usuario.findUnique({ where: { id } });
+  return prisma.user.findUnique({ where: { id } });
 }
 
-async function create(data) {
-  const { nome, senha, tipo } = data;
-  return prisma.usuario.create({ data: { nome, senha, tipo } });
+async function create({ name, email, passwordHash, role, customerId }) {
+  return prisma.user.create({
+    data: {
+      name,
+      email,
+      passwordHash,
+      role: role || 'CUSTOMER',
+      customerId: customerId ?? null,
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      customerId: true,
+      createdAt: true,
+    },
+  });
 }
 
 async function update(id, data) {
   const payload = {};
-  if (data.nome !== undefined) payload.nome = data.nome;
-  if (data.senha !== undefined) payload.senha = data.senha;
-  if (data.tipo !== undefined) payload.tipo = data.tipo;
+  if (data.name !== undefined) payload.name = data.name;
+  if (data.email !== undefined) payload.email = data.email;
+  if (data.passwordHash !== undefined) payload.passwordHash = data.passwordHash;
+  if (data.role !== undefined) payload.role = data.role;
+  if (data.customerId !== undefined) payload.customerId = data.customerId;
 
-  return prisma.usuario.update({ where: { id }, data: payload });
+  return prisma.user.update({
+    where: { id: Number(id) },
+    data: payload,
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      customerId: true,
+      createdAt: true,
+    },
+  });
 }
 
 async function remove(id) {
-  return prisma.usuario.delete({ where: { id } });
+  return prisma.user.delete({
+    where: { id: Number(id) },
+    select: { id: true, email: true },
+  });
 }
 
-module.exports = { findAll, findById, create, update, remove };
+async function findAll() {
+  return prisma.user.findMany({
+    orderBy: { id: 'asc' },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      customerId: true,
+      createdAt: true,
+    },
+  });
+}
+
+module.exports = {
+  findAll,
+  findByEmail,
+  findById,
+  create,
+  update,
+  remove,
+};
