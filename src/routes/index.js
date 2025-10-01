@@ -8,4 +8,5 @@ module.exports = {
   orders: require('./order.routes'),
   auth: require('./auth.routes'),
   carts: require('./cart.routes'),
+  users: require('./user.routes'),
 };

@@ -1,25 +1,32 @@
 const { z } = require('zod');
 
-const createUserSchema = z.object({
-  body: z.object({
-    nome: z.string().min(1, 'nome é obrigatório'),
-    senha: z.string().min(1, 'senha é obrigatória'),
-    tipo: z.string().min(1, 'tipo é obrigatório'),
-  }),
-});
-
-const updateUserSchema = z.object({
-  body: z.object({
-    nome: z.string().min(1).optional(),
-    senha: z.string().min(1).optional(),
-    tipo: z.string().min(1).optional(),
-  }),
-});
-
 const idParamSchema = z.object({
   params: z.object({
-    id: z.string().regex(/^\d+$/, 'id deve ser numérico'),
+    id: z.coerce.number().int().positive(),
   }),
 });
 
-module.exports = { createUserSchema, updateUserSchema, idParamSchema };
+const updateUserProfileSchema = z.object({
+  body: z.object({
+    name: z.string().min(1, 'name é obrigatório').optional(),
+    email: z.string().email('email inválido').optional(),
+  }).refine((b) => b.name !== undefined || b.email !== undefined, {
+    message: 'Informe name e/ou email',
+    path: ['name'],
+  }),
+});
+
+const createUserSchema = z.object({
+  body: z.object({
+    name: z.string().min(1, 'name é obrigatório'),
+    email: z.string().email('email inválido'),
+    passwordHash: z.string().min(1, 'passwordHash é obrigatório'),
+    role: z.enum(['ADMIN', 'SELLER', 'CUSTOMER']).optional(),
+  }),
+});
+
+module.exports = {
+  idParamSchema,
+  updateUserProfileSchema,
+  createUserSchema,
+};

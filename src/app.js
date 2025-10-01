@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(cors({
   origin: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'X-User-Id'],
+  allowedHeaders: ['Content-Type', 'X-User-Id', 'Authorization'],
   credentials: false,
 }));
 app.options('*', cors());
@@ -26,6 +26,8 @@ app.use('/auth', router.auth);
 app.use('/brands', router.brands);
 app.use('/categories', router.categories);
 app.use('/products', router.productsV2);
+
+app.use('/users', router.users);
 
 app.use('/customers', router.customers);
 app.use(router.addresses);
