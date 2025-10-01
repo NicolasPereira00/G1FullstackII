@@ -7,12 +7,14 @@ const router = require('./routes');
 const app = express();
 app.use(express.json());
 
-app.use(cors({
-  origin: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'X-User-Id', 'Authorization'],
-  credentials: false,
-}));
+app.use(
+  cors({
+    origin: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'X-User-Id', 'Authorization'],
+    credentials: false,
+  })
+);
 app.options('*', cors());
 
 app.use(currentUser);
@@ -26,13 +28,14 @@ app.use('/auth', router.auth);
 app.use('/brands', router.brands);
 app.use('/categories', router.categories);
 app.use('/products', router.productsV2);
-
 app.use('/users', router.users);
-
 app.use('/customers', router.customers);
-app.use(router.addresses);
+app.use('/addresses', router.addresses);
 app.use('/orders', router.orders);
-app.use('/', router.carts);
+
+app.use('/cart', router.cartMe);
+app.use('/addresses/me', router.addressesMe);
+app.use('/orders/me', router.ordersMe);
 
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);

@@ -7,6 +7,7 @@ module.exports = {
   addresses: require('./address.routes'),
   orders: require('./order.routes'),
   auth: require('./auth.routes'),
-  carts: require('./cart.routes'),
-  users: require('./user.routes'),
+  cartMe: require('./cart.me.routes'),
+  addressesMe: require('./addresses.me.routes'),
+  ordersMe: require('./orders.me.routes'),
 };
