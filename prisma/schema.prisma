@@ -63,11 +63,10 @@ model ProductVariant {
   ean        String?     @unique
   stock      Int         @default(0)
   price      Decimal?
-  product    Product     @relation(fields: [productId], references: [id])
+  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
   orderItems OrderItem[]
-
-  images   VariantImage[]
-  CartItem CartItem[]
+  images     VariantImage[]
+  CartItem   CartItem[]
 
   @@unique([productId, size, color])
   @@map("product_variants")
@@ -80,7 +79,7 @@ model ProductImage {
   isPrimary Boolean @default(false)
   sortOrder Int     @default(0)
 
-  product Product @relation(fields: [productId], references: [id])
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([productId, sortOrder])
   @@map("product_images")
@@ -93,7 +92,7 @@ model VariantImage {
   isPrimary Boolean @default(false)
   sortOrder Int     @default(0)
 
-  variant ProductVariant @relation(fields: [variantId], references: [id])
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
 
   @@index([variantId, sortOrder])
   @@map("variant_images")

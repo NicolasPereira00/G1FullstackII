@@ -125,8 +125,51 @@ async function update(id, data) {
 }
 
 async function remove(id) {
-  return prisma.product.delete({ where: { id } });
+  const pid = Number(id);
+
+  return prisma.$transaction(async (tx) => {
+    const orderItemsCount = await tx.orderItem.count({ where: { productId: pid } });
+    if (orderItemsCount > 0) {
+      throw new Error("Não é possível excluir: produto presente em pedidos.");
+    }
+
+    const variants = await tx.productVariant.findMany({
+      where: { productId: pid },
+      select: { id: true },
+    });
+    const variantIds = variants.map(v => v.id);
+
+    if (variantIds.length) {
+      await tx.variantImage.deleteMany({
+        where: { variantId: { in: variantIds } },
+      });
+    }
+
+    await tx.cartItem.deleteMany({
+      where: {
+        OR: [
+          { productId: pid },
+          { variantId: { in: variantIds } },
+        ],
+      },
+    });
+
+    await tx.productVariant.deleteMany({
+      where: { productId: pid },
+    });
+
+    await tx.productImage.deleteMany({
+      where: { productId: pid },
+    });
+
+    await tx.product.delete({
+      where: { id: pid },
+    });
+
+    return { id: pid, deleted: true };
+  });
 }
+
 
 async function createVariant(productId, data) {
   return prisma.productVariant.create({
