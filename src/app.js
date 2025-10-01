@@ -25,6 +25,10 @@ app.get('/', (_req, res) =>
 
 app.use('/auth', router.auth);
 
+app.use('/addresses/me', router.addressesMe);
+app.use('/orders/me', router.ordersMe);
+app.use('/cart', router.cartMe);
+
 app.use('/brands', router.brands);
 app.use('/categories', router.categories);
 app.use('/products', router.productsV2);
@@ -32,10 +36,6 @@ app.use('/users', router.users);
 app.use('/customers', router.customers);
 app.use('/addresses', router.addresses);
 app.use('/orders', router.orders);
-
-app.use('/cart', router.cartMe);
-app.use('/addresses/me', router.addressesMe);
-app.use('/orders/me', router.ordersMe);
 
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
